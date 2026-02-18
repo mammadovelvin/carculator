@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Carculator</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  
 <style>
 :root {
   --bg1: #0b1220;
@@ -108,6 +111,24 @@ input{
   box-shadow:0 6px 15px rgba(79,140,255,0.5);
 }
 
+ #shareBtn{
+  padding:10px 16px;
+  background: linear-gradient(135deg,#25D366,#128C7E);
+  border:none;
+  border-radius:12px;
+  color:white;
+  font-weight:600;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+#shareBtn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 15px rgba(37,211,102,0.4);
+}
+ 
+
 /* Cədvəl mərkəzləşdirilmiş və ekran boyu */
 .card {
   width: 100%;
@@ -206,6 +227,7 @@ td[contenteditable="true"]:focus{
     <div class="total-add">
       <div class="total-box" id="total">Cəmi: 0.00 AZN</div>
       <button id="addExpenseBtn" onclick="addRow()">➕ Yeni xərc</button>
+      <button id="shareBtn" onclick="shareAsImage()">📤 Paylaş</button>
     </div>
   </div>
 
@@ -331,11 +353,69 @@ async function fetchCustomsDuty(){
   }catch(e){dutyRow.value='Xəta'; calculateTotal();}
 }
 
+  async function shareAsImage(){
+
+  const element = document.querySelector('.container');
+
+  // Inputları düz text kimi göstərmək üçün klon yaradırıq
+  const clone = element.cloneNode(true);
+
+  clone.querySelectorAll("input").forEach(input=>{
+    const span = document.createElement("span");
+    span.innerText = input.value || "0";
+    span.style.fontWeight = "600";
+    span.style.padding = "4px";
+    input.parentNode.replaceChild(span, input);
+  });
+
+  clone.style.background = "#0b1220";
+  clone.style.padding = "20px";
+  clone.style.borderRadius = "20px";
+
+  document.body.appendChild(clone);
+  clone.style.position = "absolute";
+  clone.style.left = "-9999px";
+
+  const canvas = await html2canvas(clone,{
+    scale:2,
+    backgroundColor:"#0b1220"
+  });
+
+  document.body.removeChild(clone);
+
+  const blob = await new Promise(resolve =>
+    canvas.toBlob(resolve,"image/png")
+  );
+
+  const file = new File([blob],"carculator.png",{type:"image/png"});
+
+  // Mobil share API
+  if(navigator.share && navigator.canShare({files:[file]})){
+    try{
+      await navigator.share({
+        files:[file],
+        title:"Carculator nəticəsi",
+        text:"Avtomobil xərclərinin hesablanması"
+      });
+    }catch(err){
+      console.log("Paylaş ləğv edildi");
+    }
+  }else{
+    // Əgər share dəstəklənmirsə – avtomatik yüklə
+    const link = document.createElement("a");
+    link.download = "carculator.png";
+    link.href = canvas.toDataURL();
+    link.click();
+  }
+}
+
+
 document.getElementById('issueDate').addEventListener('change',fetchCustomsDuty);
 document.getElementById('engineCapacity').addEventListener('input',fetchCustomsDuty);
 </script>
 
 </body>
 </html>
+
 
 
