@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg1: #0b1220;
+  --bg2: #1e293b;
+  --card: rgba(255,255,255,0.06);
+  --border: rgba(255,255,255,0.12);
+  --primary: #4f8cff;
+  --primary2: #7c3aed;
+  --text: #e2e8f0;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+html, body{
+  width:100%; height:100%;
+  font-family:'Inter',sans-serif;
+  background: radial-gradient(circle at top left,#1e293b,#0b1220 60%);
+  color:var(--text);
+}
+
+body{
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+  padding:20px;
+}
+
+.container{
+  display:flex;
+  flex-direction:column;
+  flex:1;
+  align-items:center;
+  justify-content:flex-start;
+}
+
+/* Header vertical mərkəzləşdirilmiş */
+.header{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.header-left{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px;
+  justify-content:center;
+}
+
+h2{
+  font-size:32px;
+  font-weight:700;
+}
+
+input{
+  padding:5px 8px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  font-size:16px;
+}
+
+.total-add{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+.total-box{
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  padding:10px 18px;
+  border-radius:16px;
+  font-weight:600;
+  font-size:20px;
+  box-shadow:0 0 20px rgba(79,140,255,0.4);
+  white-space:nowrap;
+  transition:0.3s;
+}
+
+.total-box.animate{transform:scale(1.05);}
+
+#addExpenseBtn{
+  padding:10px 16px;
+  background: linear-gradient(135deg,var(--primary),var(--primary2));
+  border:none;
+  border-radius:12px;
+  color:white;
+  font-weight:600;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+#addExpenseBtn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 15px rgba(79,140,255,0.5);
+}
+
+/* Cədvəl mərkəzləşdirilmiş və ekran boyu */
+.card {
+  width: 100%;
+  max-width: auto; /* ekranı tam istifadə etsin */
+  background: var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:10px;
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start; /* sətirlər yuxarıdan başlasın */
+  overflow-x:auto; /* yalnız horizontal scroll lazım olduqda */
+}
+
+}
+
+table {
+  width: 100%;
+  min-width: 600px; /* kiçik ekranlarda da məlumatlar sığsın */
+  border-collapse: collapse;
+  font-size: 20px;
+  table-layout: auto;
+}
+
+
+th, td{
+  padding:4px 6px;
+  vertical-align:middle;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+th:nth-child(1), td:nth-child(1) { width: 8%; text-align: left; }
+th:nth-child(2), td:nth-child(2) { width: 30%; text-align: left; }
+th:nth-child(3), td:nth-child(3) { width: 40%; text-align: center; }
+th:nth-child(4), td:nth-child(4) { width: 35%; text-align: right; }
+
+input[type='number']{
+  width:90px;
+  padding:4px 6px;
+  text-align:right;
+  background: rgba(255,255,255,0.07);
+  border:1px solid var(--border);
+  border-radius:6px;
+  color:var(--text);
+  font-size:16px;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+input[type='number']{-moz-appearance:textfield;}
+
+td[contenteditable="true"]{
+  cursor:text;
+  user-select:text;
+  padding-left:6px;
+  font-weight:500;
+  color:#cbd5e1;
+  border-radius:4px;
+}
+td[contenteditable="true"]:focus{
+  outline:2px solid var(--primary);
+  background-color:rgba(79,140,255,0.15);
+}
+
+@media(max-width:1200px){
+  table{font-size:16px;}
+  input[type='number']{width:70px;font-size:16px;}
+  h2{font-size:28px;}
+  #addExpenseBtn{font-size:14px;padding:6px 12px;}
+  .total-box{font-size:16px;padding:6px 12px;}
+}
+
+@media(max-width:600px){
+  table{font-size:14px;}
+  input[type='number']{width:60px;font-size:14px;}
+  h2{font-size:24px;}
+  #addExpenseBtn{font-size:12px;padding:4px 10px;}
+  .total-box{font-size:14px;padding:4px 10px;}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h2>🚗 Carculator</h2>
+    <div class="header-left">
+      <label for="issueDate">İstehsal tarixi:</label>
+      <input type="date" id="issueDate" value="2019-05-01" />
+      <label for="engineCapacity">Mühərrikin həcmi (sm3):</label>
+      <input type="number" id="engineCapacity" value="1500" />
+    </div>
+    <div class="total-add">
+      <div class="total-box" id="total">Cəmi: 0.00 AZN</div>
+      <button id="addExpenseBtn" onclick="addRow()">➕ Yeni xərc</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <table>
+  <thead>
+    <tr>
+      <th>№</th>
+      <th>Xərclər</th>
+      <th>USD</th>
+      <th>AZN</th>
+    </tr>
+  </thead>
+  <tbody id="tableBody">
+    <!-- Mövcud sətirlər -->
+    <tr><td>1.</td><td contenteditable="false">Auksion</td><td><input type="number" class="usd"/></td><td><input type="number" class="azn" readonly/></td></tr>
+    <tr><td>2.</td><td contenteditable="false">Auksion vergisi</td><td><input type="number" class="usd"/></td><td><input type="number" class="azn" readonly/></td></tr>
+    <tr><td>3.</td><td contenteditable="false">İnvoys haqqı</td><td><input type="number" class="usd"/></td><td><input type="number" class="azn" readonly/></td></tr>
+    <tr><td>4.</td><td contenteditable="false">Yol xərci</td><td><input type="number" class="usd"/></td><td><input type="number" class="azn" readonly/></td></tr>
+    <tr><td>5.</td><td contenteditable="false">İnvoys haqqı</td><td><input type="number" class="usd"/></td><td><input type="number" class="azn" readonly/></td></tr>
+    <tr><td>6.</td><td contenteditable="false">Gömrük rüsumu</td><td></td><td><input type="number" class="azn"/></td></tr>
+    <tr><td>7.</td><td contenteditable="false">Torpaqbasdı</td><td></td><td><input type="number" class="azn" value="300"/></td></tr>
+    <tr><td>8.</td><td contenteditable="false">Bəyannamə</td><td></td><td><input type="number" class="azn" value="35"/></td></tr>
+    <tr><td>9.</td><td contenteditable="false">Motor nömrəsi</td><td></td><td><input type="number" class="azn" value="10"/></td></tr>
+    <tr><td>10.</td><td contenteditable="false">Dayanacaq pulu</td><td></td><td><input type="number" class="azn" value="20"/></td></tr>
+    <tr><td>11.</td><td contenteditable="false">Ərizə</td><td></td><td><input type="number" class="azn" value="20"/></td></tr>
+    <tr><td>12.</td><td contenteditable="false">Nömrə</td><td></td><td><input type="number" class="azn" value="400"/></td></tr>
+    <tr><td>13.</td><td contenteditable="false">Qazalı olması</td><td></td><td><input type="number" class="azn" value="100"/></td></tr>
+    <tr><td>14.</td><td contenteditable="false">Qara şüşə</td><td></td><td><input type="number" class="azn" value="0"/></td></tr>
+    <tr><td>15.</td><td contenteditable="false">Ehtiyat hissəsi</td><td></td><td><input type="number" class="azn" value="0"/></td></tr>
+    <tr><td>16.</td><td contenteditable="false">Təmir</td><td></td><td><input type="number" class="azn" value="0"/></td></tr>
+    <tr><td>17.</td><td contenteditable="false">Sürpriz</td><td></td><td><input type="number" class="azn" value="500"/></td></tr>
+  </tbody>
+</table>
+
+  </div>
+</div>
+
+<script>
+const RATE=1.7;
+
+function calculateTotal(){
+  let total=0;
+  document.querySelectorAll('.azn').forEach(i=>total+=parseFloat(i.value)||0);
+  const box=document.getElementById('total');
+  box.innerText='Cəmi: '+total.toFixed(2)+' AZN';
+  box.classList.add('animate');
+  setTimeout(()=>box.classList.remove('animate'),200);
+}
+
+function setupRow(row, isCustomsTrigger=false){
+  const usd=row.querySelector('.usd');
+  const azn=row.querySelector('.azn');
+
+  if(usd){
+    usd.addEventListener('input',()=>{ 
+      if(azn.hasAttribute('readonly')) azn.value=((parseFloat(usd.value)||0)*RATE).toFixed(2); 
+      calculateTotal(); 
+      if(isCustomsTrigger) fetchCustomsDuty();
+    });
+    usd.addEventListener('keydown',(e)=>{
+      if(e.key==='Enter'){ e.preventDefault(); focusNextUsd(usd); }
+    });
+  }
+
+  if(azn){
+    azn.addEventListener('input',calculateTotal);
+    azn.addEventListener('keydown',(e)=>{
+      if(e.key==='Enter'){ e.preventDefault(); focusNextAzn(azn); }
+    });
+  }
+}
+
+function focusNextUsd(current){
+  const usdInputs = Array.from(document.querySelectorAll('.usd'));
+  const curIdx = usdInputs.indexOf(current);
+  if(curIdx >=0 && curIdx < usdInputs.length - 1){
+    usdInputs[curIdx + 1].focus();
+  } else {
+    const aznInputs = Array.from(document.querySelectorAll('.azn:not([readonly])'));
+    if(aznInputs.length > 0) aznInputs[0].focus();
+  }
+}
+
+function focusNextAzn(current){
+  const aznInputs = Array.from(document.querySelectorAll('.azn:not([readonly])'));
+  const idx = aznInputs.indexOf(current);
+  if(idx >=0 && idx < aznInputs.length - 1){
+    aznInputs[idx + 1].focus();
+  }
+}
+
+function addRow(){
+  const tbody=document.getElementById('tableBody');
+  const idx=tbody.rows.length+1;
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${idx}.</td><td contenteditable="true"></td><td></td><td><input type="number" class="azn"></td>`;
+  tbody.appendChild(tr);
+  setupRow(tr);
+  tr.querySelector('td[contenteditable]').focus();
+}
+
+document.querySelectorAll('#tableBody tr').forEach((row,idx)=>setupRow(row,idx<2));
+calculateTotal();
+
+async function fetchCustomsDuty(){
+  const tBody=document.getElementById('tableBody');
+  const dutyRow=tBody.rows[5].querySelector('.azn');
+  const priceSum=(parseFloat(tBody.rows[0].querySelector('.usd').value)||0)+(parseFloat(tBody.rows[1].querySelector('.usd').value)||0);
+  const engine=document.getElementById('engineCapacity').value||0;
+  const issue=document.getElementById('issueDate').value||"0";
+  dutyRow.value='Hesablanır...';
+  try{
+    const res=await fetch("https://c2b-fbusiness.customs.gov.az/api/v1/dictionaries/calAutoDutyv2",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({autoType:"0",commerceType:"nonFree",engine:engine.toString(),engineType:"0",issueDate:issue,otherExpenses:"0",price:priceSum.toString(),transportExpenses:"2000"})
+    });
+    if(!res.ok){dutyRow.value='Xəta'; return;}
+    const data=await res.json();
+    dutyRow.value=parseFloat(data.data.autoDuty.total.value||0).toFixed(2);
+    calculateTotal();
+  }catch(e){dutyRow.value='Xəta'; calculateTotal();}
+}
+
+document.getElementById('issueDate').addEventListener('change',fetchCustomsDuty);
+document.getElementById('engineCapacity').addEventListener('input',fetchCustomsDuty);
+</script>
+
+</body>
+</html>
